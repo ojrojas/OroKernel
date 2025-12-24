@@ -1,11 +1,11 @@
-// OroIdentityServer
+// OroKernel
 // Copyright (C) 2025 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 namespace OroKernel.Shared.Interfaces;
 
 /// <summary>
-/// OroIdentityServer Application DbContext interface
+/// OroKernel Application DbContext interface
 /// </summary>
 public interface IOroAppDbContext
 {
