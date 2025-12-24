@@ -7,6 +7,7 @@ namespace OroKernel.Shared.Entities;
 /// <summary>
 /// Base class for value objects
 /// </summary>
+[Serializable]
 public abstract record BaseValueObject : IEquatable<BaseValueObject>
 {
     /// <summary>

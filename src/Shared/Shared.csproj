@@ -5,6 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>OroKernel.Shared</RootNamespace>
+
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>OroKernel.Shared</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Oscar Rojas</Authors>
+    <Company>Oscar Rojas</Company>
+    <Description>Kernel base to perform common functionalities for OroKernel projects.</Description>
+    <PackageTags>Kernel;DDD;Notification;.NET</PackageTags>
+    <RepositoryUrl>https://github.com/ojrojas/OroKernel</RepositoryUrl>
+    <PackageLicenseExpression>GPLv3</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/ojrojas/OroKernel</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
