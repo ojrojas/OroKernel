@@ -1,0 +1,21 @@
+// OroIdentityServer
+// Copyright (C) 2025 Oscar Rojas
+// Licensed under the GNU AGPL v3.0 or later.
+// See the LICENSE file in the project root for details.
+namespace OroKernel.Shared.Events;
+
+/// <summary>
+/// Domain event entities 
+/// </summary>
+public abstract record DomainEventBase : IDomainEvent
+{
+    /// <summary>
+    /// Date and time when the event occurred
+    /// </summary>
+    public DateTime OcurredOn { get; } = DateTime.UtcNow;
+    /// <summary>
+    /// Correlation identifier
+    /// </summary>
+    /// <returns>Correlation identifier</returns>
+    public Guid CorrelationId() => Guid.NewGuid();
+}
