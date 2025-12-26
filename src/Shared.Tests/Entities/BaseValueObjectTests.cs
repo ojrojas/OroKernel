@@ -3,8 +3,17 @@ namespace Shared.Tests.Entities;
 
 public class BaseValueObjectTests
 {
-    private record TestValueObject(string Value1, int Value2) : BaseValueObject
+    private class TestValueObject : BaseValueObject
     {
+        public string Value1 { get; }
+        public int Value2 { get; }
+
+        public TestValueObject(string value1, int value2)
+        {
+            Value1 = value1;
+            Value2 = value2;
+        }
+
         protected override IEnumerable<object?> GetEquatibilityComponents()
         {
             yield return Value1;

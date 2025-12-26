@@ -4,6 +4,7 @@
 // See the LICENSE file in the project root for details.
 
 using OroKernel.Shared.Entities;
+using OroKernel.Shared.Interfaces;
 using UserManagement.DDD.Domain.ValueObjects;
 
 namespace UserManagement.DDD.Domain.Entities;

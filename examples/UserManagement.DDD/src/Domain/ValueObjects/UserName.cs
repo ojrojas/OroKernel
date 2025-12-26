@@ -52,7 +52,7 @@ public sealed class UserName : BaseValueObject
     /// </summary>
     public static explicit operator UserName(string value) => new(value);
 
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEquatibilityComponents()
     {
         yield return Value.ToLowerInvariant();
     }

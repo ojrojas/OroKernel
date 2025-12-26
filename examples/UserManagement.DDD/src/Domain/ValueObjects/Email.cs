@@ -51,7 +51,7 @@ public sealed class Email : BaseValueObject
     /// </summary>
     public static explicit operator Email(string value) => new(value);
 
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEquatibilityComponents()
     {
         yield return Value.ToLowerInvariant();
     }

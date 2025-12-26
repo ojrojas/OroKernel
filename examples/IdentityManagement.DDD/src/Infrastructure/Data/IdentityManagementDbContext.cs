@@ -32,6 +32,13 @@ public class IdentityManagementDbContext : AuditableDbContext
         {
             entity.HasKey(e => e.Id);
 
+            entity.Property(e => e.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new IdentificationTypeId(value))
+                .HasMaxLength(36)
+                .IsRequired();
+
             entity.Property(e => e.Name)
                 .HasConversion(
                     v => v.Value,

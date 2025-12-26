@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/examples/">
+    <Project Path="examples/IdentityManagement.DDD/IdentityManagement.DDD.csproj" />
     <Project Path="examples/IdentityManagement/IdentityManagement.csproj" />
+    <Project Path="examples/UserManagement.DDD/UserManagement.DDD.csproj" />
     <Project Path="examples/UserManagement/UserManagement.csproj" />
   </Folder>
   <Folder Name="/src/">

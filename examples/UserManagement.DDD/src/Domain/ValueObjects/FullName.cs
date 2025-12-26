@@ -58,7 +58,7 @@ public sealed class FullName : BaseValueObject
     /// </summary>
     public static implicit operator string(FullName fullName) => fullName.DisplayName;
 
-    protected override IEnumerable<object> GetEqualityComponents()
+    protected override IEnumerable<object?> GetEquatibilityComponents()
     {
         yield return FirstName.ToLowerInvariant();
         yield return LastName.ToLowerInvariant();

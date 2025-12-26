@@ -12,7 +12,7 @@ namespace IdentityManagement.DDD.Domain.Entities;
 /// <summary>
 /// Identification type domain entity following DDD principles
 /// </summary>
-public class IdentificationType : BaseEntity<IdentificationType, int>, IAggregateRoot
+public class IdentificationType : BaseEntity<IdentificationType, IdentificationTypeId>, IAggregateRoot
 {
     /// <summary>
     /// Gets the name of the identification type.
@@ -63,16 +63,16 @@ public class IdentificationType : BaseEntity<IdentificationType, int>, IAggregat
     public static IdentificationType Create(IdentificationTypeName name, string description,
         CountryCode countryCode, int maxLength, ValidationPattern validationPattern)
     {
-        return new IdentificationType(0, name, description, countryCode, maxLength, validationPattern);
+        return new IdentificationType(IdentificationTypeId.NewId(), name, description, countryCode, maxLength, validationPattern);
     }
 
     /// <summary>
     /// Creates a new identification type with a custom ID.
     /// </summary>
-    public IdentificationType(int id, IdentificationTypeName name, string description,
+    public IdentificationType(IdentificationTypeId id, IdentificationTypeName name, string description,
         CountryCode countryCode, int maxLength, ValidationPattern validationPattern)
     {
-        Id = id;
+        Id = id ?? throw new ArgumentNullException(nameof(id));
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Description = description ?? throw new ArgumentNullException(nameof(description));
         CountryCode = countryCode ?? throw new ArgumentNullException(nameof(countryCode));

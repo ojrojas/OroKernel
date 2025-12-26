@@ -116,7 +116,7 @@ public class IdentificationTypeService
     private static IdentificationTypeDto MapToDto(IdentificationType identificationType)
     {
         return new IdentificationTypeDto(
-            identificationType.Id,
+            identificationType.Id.Value,
             identificationType.Name.Value,
             identificationType.Description,
             identificationType.CountryCode.Value,

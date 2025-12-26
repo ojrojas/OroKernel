@@ -6,6 +6,7 @@
 using IdentityManagement.DDD.Application.Commands;
 using IdentityManagement.DDD.Application.Queries;
 using IdentityManagement.DDD.Application.Services;
+using IdentityManagement.DDD.Domain.ValueObjects;
 using IdentityManagement.DDD.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -95,7 +96,7 @@ public class Program
         // Update an identification type
         Console.WriteLine("\nUpdating Passport description...");
         var updateCommand = new UpdateIdentificationTypeCommand(
-            passport.Id,
+            new IdentificationTypeId(passport.Id),
             "Passport",
             "Official passport document for international travel",
             "USA",
@@ -108,7 +109,7 @@ public class Program
 
         // Get specific identification type
         Console.WriteLine("\nGetting Driver's License by ID:");
-        var getByIdQuery = new GetIdentificationTypeByIdQuery(driversLicense.Id);
+        var getByIdQuery = new GetIdentificationTypeByIdQuery(new IdentificationTypeId(driversLicense.Id));
         var retrievedType = await identificationTypeService.GetIdentificationTypeByIdAsync(getByIdQuery);
         if (retrievedType != null)
         {
@@ -117,7 +118,7 @@ public class Program
 
         // Deactivate an identification type
         Console.WriteLine("\nDeactivating Social Security Number...");
-        var deactivateCommand = new DeactivateIdentificationTypeCommand(ssn.Id);
+        var deactivateCommand = new DeactivateIdentificationTypeCommand(new IdentificationTypeId(ssn.Id));
         await identificationTypeService.DeactivateIdentificationTypeAsync(deactivateCommand);
         Console.WriteLine("Deactivated SSN");
 

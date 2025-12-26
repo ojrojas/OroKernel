@@ -5,6 +5,7 @@
 
 using IdentityManagement.DDD.Domain.Entities;
 using IdentityManagement.DDD.Domain.Repositories;
+using IdentityManagement.DDD.Domain.ValueObjects;
 using IdentityManagement.DDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +23,7 @@ public class IdentificationTypeRepository : IIdentificationTypeRepository
         _context = context;
     }
 
-    public async Task<IdentificationType?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IdentificationType?> GetByIdAsync(IdentificationTypeId id, CancellationToken cancellationToken = default)
     {
         return await _context.IdentificationTypes.FindAsync(new object[] { id }, cancellationToken);
     }

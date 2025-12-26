@@ -9,7 +9,7 @@ namespace IdentityManagement.DDD.Application.DTOs;
 /// Data Transfer Object for IdentificationType
 /// </summary>
 public record IdentificationTypeDto(
-    int Id,
+    Guid Id,
     string Name,
     string Description,
     string CountryCode,

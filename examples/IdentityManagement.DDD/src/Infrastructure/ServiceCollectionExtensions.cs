@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
     {
         // Infrastructure
         services.AddDbContext<IdentityManagementDbContext>(options =>
-            options.UseSqlite(connectionString));
+            options.UseInMemoryDatabase("IdentityManagementDb"));
 
         services.AddScoped<IIdentificationTypeRepository, IdentificationTypeRepository>();
 

@@ -4,6 +4,7 @@
 // See the LICENSE file in the project root for details.
 
 using IdentityManagement.DDD.Domain.Entities;
+using IdentityManagement.DDD.Domain.ValueObjects;
 
 namespace IdentityManagement.DDD.Domain.Repositories;
 
@@ -15,7 +16,7 @@ public interface IIdentificationTypeRepository
     /// <summary>
     /// Gets an identification type by ID.
     /// </summary>
-    Task<IdentificationType?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<IdentificationType?> GetByIdAsync(IdentificationTypeId id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets all identification types.

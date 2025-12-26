@@ -9,7 +9,7 @@ namespace IdentityManagement.DDD.Application.Commands;
 /// Command to create a new identification type
 /// </summary>
 public record CreateIdentificationTypeCommand(
-    int? Id,
+    Guid? Id,
     string Name,
     string Description,
     string CountryCode,
