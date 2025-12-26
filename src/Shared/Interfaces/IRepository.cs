@@ -5,10 +5,10 @@
 namespace OroKernel.Shared.Interfaces;
 
 /// <summary>
-/// Generic repository interface
+/// Base generic repository interface
 /// </summary>
 /// <typeparam name="T">Entity type</typeparam>
-public interface IRepository<T> where T : class, IAggregateRoot
+public interface IRepositoryBase<T> where T : class, IAggregateRoot
 {
   /// <summary>
   /// Gets the current DbContext Setted in T entity 
@@ -33,14 +33,6 @@ public interface IRepository<T> where T : class, IAggregateRoot
   /// <param name="cancellationToken"> Cancellation token </param>
   Task DeleteAsync(T entity, CancellationToken cancellationToken);
   /// <summary>
-  /// Gets an entity by its identifier
-  /// </summary>
-  /// <typeparam name="TId"></typeparam>
-  /// <param name="id"></param>
-  /// <param name="cancellationToken"> Cancellation token </param>
-  /// <returns> Entity by identifier </returns>
-  Task<T?> GetByIdAsync<TId>(TId id, CancellationToken cancellationToken) where TId : notnull;
-  /// <summary>
   /// Gets all entities from the repository
   /// </summary>
   /// <param name="cancellationToken"> Cancellation token </param>
@@ -60,4 +52,37 @@ public interface IRepository<T> where T : class, IAggregateRoot
   /// <param name="cancellationToken"> Cancellation token </param>
   /// <returns> Entity matching the predicate </returns>
   Task<T?> FindSingleAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
+}
+
+/// <summary>
+/// Generic repository interface
+/// </summary>
+/// <typeparam name="T">Entity type</typeparam>
+public interface IRepository<T> : IRepositoryBase<T> where T : class, IAggregateRoot
+{
+  /// <summary>
+  /// Gets an entity by its identifier
+  /// </summary>
+  /// <typeparam name="TId"></typeparam>
+  /// <param name="id"></param>
+  /// <param name="cancellationToken"> Cancellation token </param>
+  /// <returns> Entity by identifier </returns>
+  Task<T?> GetByIdAsync<TId>(TId id, CancellationToken cancellationToken) where TId : notnull;
+}
+
+/// <summary>
+/// Generic repository interface with specific ID type
+/// </summary>
+/// <typeparam name="TEntity">Entity type</typeparam>
+/// <typeparam name="TId">ID type</typeparam>
+public interface IRepository<TEntity, TId> : IRepositoryBase<TEntity> where TEntity : class, IAggregateRoot
+where TId : class
+{
+  /// <summary>
+  /// Gets an entity by its identifier
+  /// </summary>
+  /// <param name="id"></param>
+  /// <param name="cancellationToken"> Cancellation token </param>
+  /// <returns> Entity by identifier </returns>
+  Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken);
 }
