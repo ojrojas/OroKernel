@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/IdentityManagement/IdentityManagement.csproj" />
+    <Project Path="examples/UserManagement/UserManagement.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Shared.Tests/Shared.Tests.csproj" />
     <Project Path="src/Shared/Shared.csproj" />

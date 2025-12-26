@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using MSOptions = Microsoft.Extensions.Options;
 using OroKernel.Shared.Data;
 
 namespace Shared.Tests.Data;
@@ -33,7 +34,7 @@ public class AuditableDbContextTests
         var options = new DbContextOptionsBuilder<TestAuditableDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var userInfoOptions = Options.Create(userInfo);
+        var userInfoOptions = MSOptions.Options.Create(userInfo);
 
         using var context = new TestAuditableDbContext(options, userInfoOptions);
         var entity = new TestEntity { Name = "Test" };
@@ -58,7 +59,7 @@ public class AuditableDbContextTests
         var options = new DbContextOptionsBuilder<TestAuditableDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var userInfoOptions = Options.Create(userInfo);
+        var userInfoOptions = MSOptions.Options.Create(userInfo);
 
         using var context = new TestAuditableDbContext(options, userInfoOptions);
         var entity = new TestEntity { Name = "Test" };
@@ -85,7 +86,7 @@ public class AuditableDbContextTests
         var options = new DbContextOptionsBuilder<TestAuditableDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var userInfoOptions = Options.Create(userInfo);
+        var userInfoOptions = MSOptions.Options.Create(userInfo);
 
         using var context = new TestAuditableDbContext(options, userInfoOptions);
         var entity = new TestEntity { Name = "Test" };

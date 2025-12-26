@@ -8,7 +8,7 @@ namespace OroKernel.Shared.Entities;
 /// Base class for value objects
 /// </summary>
 [Serializable]
-public abstract record BaseValueObject : IEquatable<BaseValueObject>
+public abstract class BaseValueObject : IEquatable<BaseValueObject>
 {
     /// <summary>
     /// Gets the components that define the equality of the value object
@@ -23,5 +23,25 @@ public abstract record BaseValueObject : IEquatable<BaseValueObject>
     public override int GetHashCode()
     {
         return GetEquatibilityComponents().Aggregate(1, HashCode.Combine);
+    }
+
+    /// <summary>
+    /// Checks equality between two value objects
+    /// </summary>
+    public bool Equals(BaseValueObject? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if (GetType() != other.GetType()) return false;
+
+        return GetEquatibilityComponents().SequenceEqual(other.GetEquatibilityComponents());
+    }
+
+    /// <summary>
+    /// Checks equality with another object
+    /// </summary>
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as BaseValueObject);
     }
 }

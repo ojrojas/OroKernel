@@ -158,6 +158,65 @@ The tests include:
 
 This project is licensed under the GNU AGPL v3.0 or later. See the LICENSE file in the project root for details.
 
-## Contact
+## Examples
 
-For questions or support, contact the development team.
+The project includes four example projects that demonstrate the integration of OroKernel.Shared with **Entity Framework Core**. These examples show both basic usage and advanced Domain-Driven Design (DDD) patterns:
+
+### Basic Examples (EF Core Integration)
+
+#### UserManagement
+Console project demonstrating the use of `BaseEntity` (with Guid identifier) integrated with EF Core for user management.
+
+```bash
+cd examples/UserManagement
+dotnet run
+```
+
+#### IdentityManagement
+Console project demonstrating the use of `BaseEntity<T, TId>` with `IdentificationType` entity and `int` as identifier type, integrated with EF Core for identification type management.
+
+```bash
+cd examples/IdentityManagement
+dotnet run
+```
+
+### Advanced Examples (Domain-Driven Design)
+
+#### UserManagement.DDD
+Complete DDD implementation for user management with proper layered architecture:
+- **Domain**: Entities, value objects, and domain services
+- **Application**: Application services, commands, and queries
+- **Infrastructure**: EF Core repositories and data persistence
+- **Presentation**: Console application demonstrating the system
+
+```bash
+cd examples/UserManagement.DDD/src/Presentation
+dotnet run
+```
+
+#### IdentityManagement.DDD
+Complete DDD implementation for identity management following the same patterns as UserManagement.DDD:
+- **Domain**: IdentificationType aggregate with value objects (IdentificationTypeName, CountryCode, ValidationPattern)
+- **Application**: CQRS with commands and queries for identification type operations
+- **Infrastructure**: Repository pattern with EF Core implementation
+- **Presentation**: Console demo with full CRUD operations
+
+```bash
+cd examples/IdentityManagement.DDD/src/Presentation
+dotnet run
+```
+
+### What the Examples Demonstrate
+
+All examples showcase:
+- Complete Entity Framework Core configuration with dependency injection
+- Real CRUD operations in database (in-memory for demonstration)
+- Automatic auditing of all database operations
+- Entity state management
+- Data validation
+- Inheritance from base classes
+- Database queries and operations
+- Domain-Driven Design patterns (in DDD examples)
+- Value object validation and immutability
+- Repository pattern implementation
+- CQRS (Command Query Responsibility Segregation) in DDD examples
