@@ -1,5 +1,3 @@
-
-
 namespace Shared.Tests.Services;
 
 public class ClaimsUserInfoServiceTests
@@ -19,10 +17,10 @@ public class ClaimsUserInfoServiceTests
         // Arrange
         var claims = new List<Claim>
         {
-            new Claim("", "1"), // State
-            new Claim("Sub", Guid.NewGuid().ToString()),
-            new Claim("UserName", "testuser"),
-            new Claim("Email", "test@example.com")
+            new("", "1"), // State
+            new("Sub", Guid.NewGuid().ToString()),
+            new("UserName", "testuser"),
+            new("Email", "test@example.com")
         };
         var identity = new ClaimsIdentity(claims);
         var principal = new ClaimsPrincipal(identity);
@@ -47,10 +45,10 @@ public class ClaimsUserInfoServiceTests
         // Arrange
         var claims = new List<Claim>
         {
-            new Claim("", "invalid"),
-            new Claim("Sub", Guid.NewGuid().ToString()),
-            new Claim("UserName", "testuser"),
-            new Claim("Email", "test@example.com")
+            new("", "invalid"),
+            new("Sub", Guid.NewGuid().ToString()),
+            new("UserName", "testuser"),
+            new("Email", "test@example.com")
         };
         var identity = new ClaimsIdentity(claims);
         var principal = new ClaimsPrincipal(identity);
