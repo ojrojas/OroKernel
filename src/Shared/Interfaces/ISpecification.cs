@@ -1,0 +1,12 @@
+// OroKernel
+// Copyright (C) 2025 Oscar Rojas
+// Licensed under the GNU AGPL v3.0 or later.
+// See the LICENSE file in the project root for details.
+namespace OroKernel.Shared.Interfaces;
+
+public interface ISpecification<T>
+{
+    Expression<Func<T, bool>> Criteria { get; }
+    List<Expression<Func<T, object>>> Includes { get; }
+    List<string> IncludeStrings { get; }
+}
