@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using OroKernel.Shared.Entities;
+using OroKernel.Shared.Specification;
 
 namespace Shared.Tests.Entities;
 
@@ -12,83 +13,79 @@ public class BaseSpecificationTests
         public bool IsActive { get; set; }
     }
 
-    private class TestSpecification : BaseSpecification<TestEntity>
+    private sealed class ActiveEntitySpec : BaseSpecification<TestEntity>
     {
-        public TestSpecification(Expression<Func<TestEntity, bool>> criteria) : base(criteria) { }
+        public override Expression<Func<TestEntity, bool>> ToExpression()
+        {
+            return e => e.IsActive;
+        }
+    }
+
+    private sealed class IdGreaterThanSpec(int minId) : BaseSpecification<TestEntity>
+    {
+        public override Expression<Func<TestEntity, bool>> ToExpression()
+        {
+            return e => e.Id > minId;
+        }
     }
 
     [Fact]
-    public void Constructor_SetsCriteria()
+    public void IsSatisfiedBy_ReturnsTrue_WhenConditionMet()
     {
-        // Arrange
-        Expression<Func<TestEntity, bool>> criteria = e => e.Id > 0;
+        var spec = new ActiveEntitySpec();
+        var entity = new TestEntity { Id = 1, IsActive = true };
 
-        // Act
-        var specification = new TestSpecification(criteria);
+        var result = spec.IsSatisfiedBy(entity);
 
-        // Assert
-        Assert.Equal(criteria, specification.Criteria);
+        Assert.True(result);
     }
 
     [Fact]
-    public void Includes_IsInitializedAsEmptyList()
+    public void IsSatisfiedBy_ReturnsFalse_WhenConditionNotMet()
     {
-        // Arrange
-        Expression<Func<TestEntity, bool>> criteria = e => e.Id > 0;
-        var specification = new TestSpecification(criteria);
+        var spec = new ActiveEntitySpec();
+        var entity = new TestEntity { Id = 1, IsActive = false };
 
-        // Act & Assert
-        Assert.NotNull(specification.Includes);
-        Assert.Empty(specification.Includes);
+        var result = spec.IsSatisfiedBy(entity);
+
+        Assert.False(result);
     }
 
     [Fact]
-    public void IncludeStrings_IsInitializedAsEmptyList()
+    public void And_CombinesTwoSpecifications()
     {
-        // Arrange
-        Expression<Func<TestEntity, bool>> criteria = e => e.Id > 0;
-        var specification = new TestSpecification(criteria);
+        var activeSpec = new ActiveEntitySpec();
+        var idSpec = new IdGreaterThanSpec(0);
+        var entity = new TestEntity { Id = 1, IsActive = true };
 
-        // Act & Assert
-        Assert.NotNull(specification.IncludeStrings);
-        Assert.Empty(specification.IncludeStrings);
+        var combined = activeSpec.And(idSpec);
+        var result = combined.IsSatisfiedBy(entity);
+
+        Assert.True(result);
     }
 
     [Fact]
-    public void AddInclude_WithExpression_AddsToIncludesList()
+    public void Or_CombinesTwoSpecifications()
     {
-        // Arrange
-        Expression<Func<TestEntity, bool>> criteria = e => e.Id > 0;
-        var specification = new TestSpecification(criteria);
-        Expression<Func<TestEntity, object>> includeExpression = e => e.Name;
+        var activeSpec = new ActiveEntitySpec();
+        var idSpec = new IdGreaterThanSpec(100);
+        var entity = new TestEntity { Id = 1, IsActive = true };
 
-        // Act
-        specification.GetType().GetMethod("AddInclude",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance,
-            null, [typeof(Expression<Func<TestEntity, object>>)], null)?
-            .Invoke(specification, [includeExpression]);
+        var combined = activeSpec.Or(idSpec);
+        var result = combined.IsSatisfiedBy(entity);
 
-        // Assert
-        Assert.Single(specification.Includes);
-        Assert.Contains(includeExpression, specification.Includes);
+        Assert.True(result);
     }
 
     [Fact]
-    public void AddInclude_WithString_AddsToIncludeStringsList()
+    public void Not_NegatesSpecification()
     {
-        // Arrange
-        Expression<Func<TestEntity, bool>> criteria = e => e.Id > 0;
-        var specification = new TestSpecification(criteria);
-        var includeString = "RelatedEntity";
+        var spec = new ActiveEntitySpec();
+        var entity = new TestEntity { Id = 1, IsActive = true };
 
-        // Act
-        specification.GetType().GetMethod("AddInclude",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance,
-            null, [typeof(string)], null)?
-            .Invoke(specification, [includeString]);
+        var negated = spec.Not();
+        var result = negated.IsSatisfiedBy(entity);
 
-        // Assert
-        Assert.Single(specification.IncludeStrings);
-        Assert.Contains(includeString, specification.IncludeStrings);
+        Assert.False(result);
     }
 }
