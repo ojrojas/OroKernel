@@ -14,16 +14,16 @@ public abstract class AuditableDbContext : DbContext
     /// </summary>
     private const int First = 0;
 
-    private readonly OroKernel.Shared.Interfaces.IUserInfoProvider _userInfoProvider;
+    private readonly IUserInfoProvider _userInfoProvider;
 
-    public AuditableDbContext(DbContextOptions options, OroKernel.Shared.Interfaces.IUserInfoProvider userInfoProvider) : base(options)
+    public AuditableDbContext(DbContextOptions options, IUserInfoProvider userInfoProvider) : base(options)
     {
         _userInfoProvider = userInfoProvider ?? throw new ArgumentNullException(nameof(userInfoProvider));
     }
 
     // Backwards-compatible constructor using IOptions<UserInfo>
     public AuditableDbContext(DbContextOptions options, IOptions<UserInfo> optionsUser)
-        : this(options, new OroKernel.Shared.Services.DefaultUserInfoProvider(optionsUser))
+        : this(options, new Services.DefaultUserInfoProvider(optionsUser))
     {
     }
 
