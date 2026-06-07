@@ -1,14 +1,14 @@
 # OroKernel
 
-OroKernel is a shared library for .NET applications that provides reusable components for identity systems and data management. It includes base entities, automatic auditing, identity helper services, and a lightweight domain-event/CQRS integration (via `OroCQRS`).
+OroKernel is a shared library for .NET applications that provides reusable components for identity systems and data management. It includes base entities, automatic auditing, identity helper services, and domain-event primitives.
 
 ## Features
 
 - **Base Entities**: Abstract classes for entities with GUID identifiers and generic `TId` support, value objects, and domain-event support.
 - **Automatic Auditing**: `AuditableDbContext` tracks create/update/delete operations and writes `AuditEntry` records.
 - **Identity Helpers**: `ClaimsUserInfoService` and `IdentityClientService` helpers to populate auditing user info and integrate with identity providers.
-- **Domain Events / CQRS**: Domain-event primitives and simple CQRS integration through the `OroCQRS` package and local domain-event interfaces.
-- **Unit Tests**: Test projects using xUnit, Moq and EF Core InMemory for fast tests.
+- **Domain Events**: Lightweight domain-event primitives (`IDomainEvent`, `IWithDomainEvents`)  for decoupled side-effect handling.
+- **Unit Tests**: Test projects using xUnit, Moq, and EF Core InMemory for fast unit and integration tests.
 
 ## Project Structure
 
@@ -24,9 +24,10 @@ OroKernel/
     │   ├── Shared.csproj
     │   ├── GlobalUsings.cs
     │   ├── Data/                     # AuditableDbContext and EF helpers
-    │   ├── Entities/                 # BaseEntity, BaseValueObject, AuditEntry
-    │   ├── Events/                   # Domain events primitives
-    │   ├── Interfaces/               # Repository, domain event and identity interfaces
+    │   ├── Entities/                 # BaseEntity, BaseValueObject, AuditEntry, Error/Result
+    │   ├── Enums/                    # EntityBaseState enum
+    │   ├── Events/                   # Domain event primitives
+    │   ├── Interfaces/               # Repository, domain event, business rule, identity interfaces
     │   ├── Options/                  # UserInfo, RoleInfo
     │   └── Services/                 # Identity-related services
     └── Shared.Tests/                 # Unit tests for the Shared library
@@ -113,7 +114,7 @@ public class MyDbContext : AuditableDbContext
 
 The `examples/` folder contains runnable console demos showing both simple usage and DDD/CQRS patterns:
 
-- `examples/UserManagement` — simple example using `BaseEntity` with `Guid` IDs.
+- `examples/UserManagement` — simple example using `BaseEntity` with `Guid` IDs, including `IBusinessRule` implementations and `BaseSpecification<T>` examples with AND/OR/NOT combinators.
 - `examples/IdentityManagement` — simple example using `BaseEntity<T, TId>` with `int` IDs.
 - `examples/UserManagement.DDD` — layered DDD example (Domain / Application / Infrastructure / Presentation).
 - `examples/IdentityManagement.DDD` — DDD example on identification types and CQRS.
@@ -142,7 +143,7 @@ Run all tests:
 dotnet test
 ```
 
-The tests use `Microsoft.EntityFrameworkCore.InMemory`, `xUnit`, and `Moq` for unit testing.
+The tests use `Microsoft.EntityFrameworkCore.InMemory`, `xUnit`, and `Moq` for unit and integration testing.
 
 ## Dependencies
 
@@ -151,8 +152,9 @@ Major dependencies are managed centrally in `Directory.Packages.props`. The repo
 - `Microsoft.EntityFrameworkCore` (InMemory / Sqlite packages referenced centrally)
 - `Microsoft.Extensions.Hosting`, `Microsoft.Extensions.DependencyInjection`, `Microsoft.Extensions.Options`
 - `Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore` for EF diagnostics
-- `OroCQRS` for CQRS/domain-event primitives used by examples
 - `xUnit` and `Moq` for testing
+
+> **Production note**: When using `IdentityClientService` with `AddHttpClient`, configure the identity provider base URL (e.g. `https://identity.yourdomain.com/`) in your application's configuration. The placeholder `https://identity.example/` in the usage examples must be replaced with your real identity provider URL.
 
 ## Contributing
 

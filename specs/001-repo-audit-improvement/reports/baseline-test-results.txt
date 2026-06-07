@@ -1,0 +1,9 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos est├ín actualizados para la restauraci├│n.
+  Shared -> C:\Users\oroja\Sources\OroKernel\src\Shared\bin\Debug\net10.0\Shared.dll
+  Shared.Tests -> C:\Users\oroja\Sources\OroKernel\src\Shared.Tests\bin\Debug\net10.0\Shared.Tests.dll
+Serie de pruebas para C:\Users\oroja\Sources\OroKernel\src\Shared.Tests\bin\Debug\net10.0\Shared.Tests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patr├│n especificado.
+
+Correctas! - Con error:     0, Superado:    43, Omitido:     0, Total:    43, Duraci├│n: 1 s - Shared.Tests.dll (net10.0)
+
