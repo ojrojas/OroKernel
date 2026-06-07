@@ -1,5 +1,5 @@
 // IdentificationTypeRepository.cs - Infrastructure Repository Implementation
-// Copyright (C) 2025 Oscar Rojas
+// Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
@@ -25,7 +25,7 @@ public class IdentificationTypeRepository : IIdentificationTypeRepository
 
     public async Task<IdentificationType?> GetByIdAsync(IdentificationTypeId id, CancellationToken cancellationToken = default)
     {
-        return await _context.IdentificationTypes.FindAsync(new object[] { id }, cancellationToken);
+        return await _context.IdentificationTypes.FindAsync([id], cancellationToken);
     }
 
     public async Task<IEnumerable<IdentificationType>> GetAllAsync(CancellationToken cancellationToken = default)

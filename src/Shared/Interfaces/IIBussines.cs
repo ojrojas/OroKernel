@@ -4,6 +4,8 @@
 // See the LICENSE file in the project root for details.
 namespace OroKernel.Shared.Interfaces;
 
-public interface IDomainEventHandler<T> where T : IDomainEvent
+public interface IBusinessRule
 {
+    bool IsSatisfied();
+    Error? Error { get; }
 }
