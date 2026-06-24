@@ -8,7 +8,7 @@
 
     <!-- NuGet Package Metadata -->
     <PackageId>OroKernel.Shared</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Oscar Rojas</Authors>
     <Company>Oscar Rojas</Company>
     <Description>Kernel base to perform common functionalities for OroKernel projects.</Description>
