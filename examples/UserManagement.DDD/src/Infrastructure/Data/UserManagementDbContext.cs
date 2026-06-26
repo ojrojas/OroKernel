@@ -35,8 +35,8 @@ public class UserManagementDbContext : AuditableDbContext
                 v => v.Value,
                 v => new Domain.ValueObjects.UserName(v));
             entity.Property(u => u.FullName).HasConversion(
-                v => new { v.FirstName, v.LastName },
-                v => new Domain.ValueObjects.FullName(v.FirstName, v.LastName));
+                v => $"{v.FirstName}|{v.LastName}",
+                v => new Domain.ValueObjects.FullName(v.Substring(0, v.IndexOf('|')), v.Substring(v.IndexOf('|') + 1)));
             entity.Property(u => u.Email).HasConversion(
                 v => v.Value,
                 v => new Domain.ValueObjects.Email(v));

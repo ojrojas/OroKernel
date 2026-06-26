@@ -24,6 +24,7 @@ Console.WriteLine();
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
+        services.AddHttpContextAccessor();
         // Configure UserInfo for auditing
         services.Configure<UserInfo>(options =>
         {
