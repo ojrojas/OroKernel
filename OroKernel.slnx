@@ -9,5 +9,6 @@
     <Project Path="src/OroKernel.Domain/OroKernel.Domain.csproj" />
     <Project Path="src/OroKernel.Domain.Tests/OroKernel.Domain.Tests.csproj" />
     <Project Path="src/OroKernel.Infrastructure/OroKernel.Infrastructure.csproj" />
+    <Project Path="src/OroKernel.Infrastructure.Tests/OroKernel.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>

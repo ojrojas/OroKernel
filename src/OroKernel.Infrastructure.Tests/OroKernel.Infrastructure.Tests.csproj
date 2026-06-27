@@ -4,7 +4,7 @@
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>OroKernel.Domain.Tests</RootNamespace>
+    <RootNamespace>OroKernel.Infrastructure.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -13,7 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OroKernel.Domain\OroKernel.Domain.csproj" />
+    <ProjectReference Include="..\OroKernel.Infrastructure\OroKernel.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
