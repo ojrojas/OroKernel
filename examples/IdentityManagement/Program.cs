@@ -6,7 +6,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OroKernel.Shared.Options;
+using OroKernel.Infrastructure.Options;
 using IdentityManagement;
 using IdentityManagement.Data;
 
@@ -152,9 +152,9 @@ Console.WriteLine();
 
 // Show that all identification types inherit from BaseEntity<IdentificationType, int>
 Console.WriteLine("All identification types inherit from BaseEntity<IdentificationType, int>:");
-Console.WriteLine($"passportType is BaseEntity<IdentificationType, int>: {passportType is OroKernel.Shared.Entities.BaseEntity<IdentificationType, int>}");
-Console.WriteLine($"nationalIdType is BaseEntity<IdentificationType, int>: {nationalIdType is OroKernel.Shared.Entities.BaseEntity<IdentificationType, int>}");
-Console.WriteLine($"driversLicenseType is BaseEntity<IdentificationType, int>: {driversLicenseType is OroKernel.Shared.Entities.BaseEntity<IdentificationType, int>}");
+Console.WriteLine($"passportType is BaseEntity<IdentificationType, int>: {passportType is OroKernel.Domain.Entities.BaseEntity<IdentificationType, int>}");
+Console.WriteLine($"nationalIdType is BaseEntity<IdentificationType, int>: {nationalIdType is OroKernel.Domain.Entities.BaseEntity<IdentificationType, int>}");
+Console.WriteLine($"driversLicenseType is BaseEntity<IdentificationType, int>: {driversLicenseType is OroKernel.Domain.Entities.BaseEntity<IdentificationType, int>}");
 Console.WriteLine();
 
 // Demonstrate ID management

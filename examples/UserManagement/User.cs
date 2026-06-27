@@ -3,8 +3,8 @@
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-using OroKernel.Shared.Interfaces;
+using OroKernel.Domain.Entities;
+using OroKernel.Domain.Interfaces;
 
 namespace UserManagement;
 

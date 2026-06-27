@@ -96,7 +96,7 @@ public class Program
         // Update an identification type
         Console.WriteLine("\nUpdating Passport description...");
         var updateCommand = new UpdateIdentificationTypeCommand(
-            new IdentificationTypeId(passport.Id),
+            IdentificationTypeId.Create(passport.Id),
             "Passport",
             "Official passport document for international travel",
             "USA",
@@ -109,7 +109,7 @@ public class Program
 
         // Get specific identification type
         Console.WriteLine("\nGetting Driver's License by ID:");
-        var getByIdQuery = new GetIdentificationTypeByIdQuery(new IdentificationTypeId(driversLicense.Id));
+        var getByIdQuery = new GetIdentificationTypeByIdQuery(IdentificationTypeId.Create(driversLicense.Id));
         var retrievedType = await identificationTypeService.GetIdentificationTypeByIdAsync(getByIdQuery);
         if (retrievedType != null)
         {
@@ -118,7 +118,7 @@ public class Program
 
         // Deactivate an identification type
         Console.WriteLine("\nDeactivating Social Security Number...");
-        var deactivateCommand = new DeactivateIdentificationTypeCommand(new IdentificationTypeId(ssn.Id));
+        var deactivateCommand = new DeactivateIdentificationTypeCommand(IdentificationTypeId.Create(ssn.Id));
         await identificationTypeService.DeactivateIdentificationTypeAsync(deactivateCommand);
         Console.WriteLine("Deactivated SSN");
 

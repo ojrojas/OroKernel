@@ -1,36 +1,21 @@
-// FullName.cs - Value Object
+// UserManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace UserManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Full name value object composed of first and last name
+/// Full name value object composed of first and last name, modeled as a positional record.
 /// </summary>
-public sealed class FullName : BaseValueObject
+public sealed record FullName(string FirstName, string LastName)
 {
-    /// <summary>
-    /// Gets the first name.
-    /// </summary>
-    public string FirstName { get; private set; }
-
-    /// <summary>
-    /// Gets the last name.
-    /// </summary>
-    public string LastName { get; private set; }
-
-    /// <summary>
-    /// Gets the full name as a single string.
-    /// </summary>
     public string DisplayName => $"{FirstName} {LastName}";
 
     /// <summary>
-    /// Creates a new full name.
+    /// Factory that validates and trims the first and last name values.
     /// </summary>
-    public FullName(string firstName, string lastName)
+    public static FullName Create(string firstName, string lastName)
     {
         if (string.IsNullOrWhiteSpace(firstName))
             throw new ArgumentException("First name cannot be null or empty", nameof(firstName));
@@ -44,8 +29,7 @@ public sealed class FullName : BaseValueObject
         if (lastName.Length > 100)
             throw new ArgumentException("Last name cannot be longer than 100 characters", nameof(lastName));
 
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+        return new FullName(firstName.Trim(), lastName.Trim());
     }
 
     /// <summary>
@@ -57,10 +41,4 @@ public sealed class FullName : BaseValueObject
     /// Implicit conversion to string.
     /// </summary>
     public static implicit operator string(FullName fullName) => fullName.DisplayName;
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return FirstName.ToLowerInvariant();
-        yield return LastName.ToLowerInvariant();
-    }
 }

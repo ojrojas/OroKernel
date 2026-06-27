@@ -1,26 +1,19 @@
-// ValidationPattern.cs - Value Object
+// IdentityManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace IdentityManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Validation pattern value object for regex patterns
+/// Validation pattern value object for regex patterns, modeled as a positional record.
 /// </summary>
-public sealed class ValidationPattern : BaseValueObject
+public sealed record ValidationPattern(string Value)
 {
     /// <summary>
-    /// Gets the regex pattern value.
+    /// Factory that validates the regex pattern.
     /// </summary>
-    public string Value { get; private set; }
-
-    /// <summary>
-    /// Creates a new validation pattern.
-    /// </summary>
-    public ValidationPattern(string value)
+    public static ValidationPattern Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Validation pattern cannot be null or empty", nameof(value));
@@ -28,7 +21,6 @@ public sealed class ValidationPattern : BaseValueObject
         if (value.Length > 500)
             throw new ArgumentException("Validation pattern cannot be longer than 500 characters", nameof(value));
 
-        // Try to validate the regex pattern
         try
         {
             System.Text.RegularExpressions.Regex.Match("", value);
@@ -38,13 +30,8 @@ public sealed class ValidationPattern : BaseValueObject
             throw new ArgumentException($"Invalid regex pattern: {ex.Message}", nameof(value));
         }
 
-        Value = value;
+        return new ValidationPattern(value);
     }
-
-    /// <summary>
-    /// Creates a new validation pattern (factory method).
-    /// </summary>
-    public static ValidationPattern CreatePattern(string value) => new(value);
 
     /// <summary>
     /// Returns the string representation of the pattern.
@@ -59,10 +46,5 @@ public sealed class ValidationPattern : BaseValueObject
     /// <summary>
     /// Explicit conversion from string.
     /// </summary>
-    public static explicit operator ValidationPattern(string value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value;
-    }
+    public static explicit operator ValidationPattern(string value) => Create(value);
 }

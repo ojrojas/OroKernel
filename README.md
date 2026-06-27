@@ -1,43 +1,65 @@
 # OroKernel
 
-OroKernel is a shared library for .NET applications that provides reusable components for identity systems and data management. It includes base entities, automatic auditing, identity helper services, and domain-event primitives.
+OroKernel is a **two-library .NET kernel** that provides reusable primitives for building DDD-inspired applications.  
+It enforces a **strict Domain / Infrastructure separation**: the domain layer has zero external dependencies beyond the BCL.
+
+| Library | Responsibility | Dependencies |
+|---|---|---|
+| `OroKernel.Domain` | Pure domain primitives: entities, value objects (as records), specifications, domain events, business rules, repository contracts | **Zero** (BCL only) |
+| `OroKernel.Infrastructure` | EF Core `AuditableDbContext`, audit entries, identity client services, HTTP retry handler, user-info providers | `OroKernel.Domain` + EF Core 10 |
+
+Both libraries target **`net10.0` and `net11.0`**.
 
 ## Features
 
-- **Base Entities**: Abstract classes for entities with GUID identifiers and generic `TId` support, value objects, and domain-event support.
+- **Base Entities**: `BaseEntity`, `BaseEntity<TId>`, `BaseEntity<T, TId>` with `Guid.CreateVersion7()` auto-IDs, equality, and domain-event support.
+- **Value Objects as `record`**: Built on C# records (`sealed record Email(string Value)`) for structural equality, immutability, and zero boilerplate.
 - **Automatic Auditing**: `AuditableDbContext` tracks create/update/delete operations and writes `AuditEntry` records.
-- **Identity Helpers**: `ClaimsUserInfoService` and `IdentityClientService` helpers to populate auditing user info and integrate with identity providers.
-- **Domain Events**: Lightweight domain-event primitives (`IDomainEvent`, `IWithDomainEvents`)  for decoupled side-effect handling.
-- **Unit Tests**: Test projects using xUnit, Moq, and EF Core InMemory for fast unit and integration tests.
+- **Specification Pattern**: `BaseSpecification<T>` with AND / OR / NOT combinators.
+- **Business Rules**: `IBusinessRule` with `Error` result pattern.
+- **Domain Events**: Lightweight `IDomainEvent` / `IDomainEventDispatcher` / `IWithDomainEvents` primitives.
+- **Identity Helpers**: `ClaimsUserInfoService`, `IdentityClientService`, `RetryDelegatingHandler`.
+- **Multi-target**: `net10.0` + `net11.0` in every library and example.
 
 ## Project Structure
 
 ```
 OroKernel/
-├── Directory.Packages.props          # Centralized NuGet package version management
-├── global.json                       # .NET SDK configuration (10.0.102)
-├── nuget.config                      # NuGet sources configuration
-├── OroKernel.slnx                    # Solution file
-├── nupkgs/                           # Generated NuGet packages
+├── Directory.Build.props              # C# latest, Nullable, WarningsAsErrors — inherited by all projects
+├── Directory.Packages.props           # Centralized NuGet package version management
+├── global.json                        # .NET 10.0.301 SDK (latestMajor roll‑forward allows .NET 11)
+├── OroKernel.slnx                     # Solution file
+├── nupkgs/                            # Generated NuGet packages
+├── specs/
+│   └── 003-domain-infrastructure-split/  # Specification, plan, and tasks for this refactor
 └── src/
-    ├── Shared/                       # Main library
-    │   ├── Shared.csproj
-    │   ├── GlobalUsings.cs
-    │   ├── Data/                     # AuditableDbContext and EF helpers
-    │   ├── Entities/                 # BaseEntity, BaseValueObject, AuditEntry, Error/Result
-    │   ├── Enums/                    # EntityBaseState enum
-    │   ├── Events/                   # Domain event primitives
-    │   ├── Interfaces/               # Repository, domain event, business rule, identity interfaces
-    │   ├── Options/                  # UserInfo, RoleInfo
-    │   └── Services/                 # Identity-related services
-    └── Shared.Tests/                 # Unit tests for the Shared library
+    ├── OroKernel.Domain/              # Pure domain library (no EF Core)
+    │   ├── Entities/                  # BaseEntity, Error, Result, WithDomainEventBase
+    │   ├── Enums/                     # EntityBaseState
+    │   ├── Events/                    # DomainEventBase
+    │   ├── Interfaces/                # IAggregateRoot, IBusinessRule, IDomainEvent*, IRepository, ISpecification
+    │   └── Specification/            # BaseSpecification<T> + combinators
+    │
+    ├── OroKernel.Infrastructure/      # Infrastructure library (EF Core)
+    │   ├── Audit/                     # AuditableDbContext, AuditEntry, AuditEntryProperty
+    │   ├── Interfaces/                # IOroAppDbContext, IUserInfoProvider, IIdentityClientService
+    │   ├── Options/                   # UserInfo, RoleInfo
+    │   └── Services/                  # ClaimsUserInfoService, DefaultUserInfoProvider, IdentityClientService, RetryDelegatingHandler
+    │
+    └── OroKernel.Domain.Tests/        # Unit and integration tests for both libraries
+
+examples/
+├── UserManagement/                    # Simple BaseEntity + Guid demo (IBusinessRule, BaseSpecification)
+├── IdentityManagement/                # BaseEntity<T, TId> + int demo
+├── UserManagement.DDD/                # Layered DDD (Domain / Application / Infrastructure / Presentation)
+└── IdentityManagement.DDD/            # DDD + CQRS on identification types
 ```
 
 ## Requirements
 
-- .NET SDK 10.0.102 (see `global.json`) or later
-- Target framework: `net10.0`
-- Central package versions are defined in `Directory.Packages.props` (EF Core, hosting, testing packages)
+- .NET SDK 10.0.301 or later (see `global.json`)
+- Target frameworks: `net10.0` and `net11.0`
+- Central package versions defined in `Directory.Packages.props`
 
 ## Installation and Setup
 
@@ -53,18 +75,44 @@ OroKernel/
    dotnet build
    ```
 
-3. Run unit tests:
+3. Run all tests:
    ```bash
    dotnet test
    ```
 
-Note: `Shared.csproj` has `GeneratePackageOnBuild` enabled, so building may produce NuGet packages when packing/creating artifacts.
+> Both `OroKernel.Domain` and `OroKernel.Infrastructure` have `GeneratePackageOnBuild` enabled (`v2.0.0`).
 
 ## Usage
 
-The library offers base entity classes and an `AuditableDbContext` that you can inherit to get automatic audit entries and a consistent entity model.
+### Domain layer
 
-Register services and providers in DI (example):
+```csharp
+using OroKernel.Domain.Entities;
+using OroKernel.Domain.Interfaces;
+
+// Inherit from BaseEntity for auto‑GUID IDs, domain events, and entity equality
+public class MyEntity : BaseEntity, IAggregateRoot
+{
+    public string Name { get; init; } = string.Empty;
+}
+```
+
+### Infrastructure layer
+
+```csharp
+using OroKernel.Infrastructure.Audit;
+using OroKernel.Infrastructure.Options;
+
+public class MyDbContext : AuditableDbContext
+{
+    public MyDbContext(DbContextOptions options, IOptions<UserInfo> userInfo)
+        : base(options, userInfo) { }
+
+    public DbSet<MyEntity> MyEntities { get; set; } = null!;
+}
+```
+
+Register services:
 
 ```csharp
 // Configure a default user info (fallback)
@@ -79,90 +127,85 @@ services.Configure<UserInfo>(opts =>
 services.AddTransient<IPostConfigureOptions<UserInfo>, ClaimsUserInfoService>();
 
 // Provider used by AuditableDbContext to obtain per-request user info
-services.AddScoped<OroKernel.Shared.Interfaces.IUserInfoProvider, OroKernel.Shared.Services.DefaultUserInfoProvider>();
+services.AddScoped<IUserInfoProvider, DefaultUserInfoProvider>();
 
-// (Optional) Register typed HttpClient for identity integration with timeout and a lightweight retry handler
-services.AddTransient<OroKernel.Shared.Services.RetryDelegatingHandler>();
-services.AddHttpClient<OroKernel.Shared.Interfaces.IIdentityClientService, OroKernel.Shared.Services.IdentityClientService>((sp, client) =>
+// (Optional) Register typed HttpClient for identity integration with retry
+services.AddTransient<RetryDelegatingHandler>();
+services.AddHttpClient<IIdentityClientService, IdentityClientService>((sp, client) =>
 {
     client.BaseAddress = new Uri("https://identity.example/");
     client.Timeout = TimeSpan.FromSeconds(10);
 })
-.AddHttpMessageHandler<OroKernel.Shared.Services.RetryDelegatingHandler>();
+.AddHttpMessageHandler<RetryDelegatingHandler>();
 ```
 
-Basic examples (see `examples/`):
+### Value Objects as records
+
+All value objects should be modeled as `sealed record` types. Equality, immutability, and hashing come for free:
 
 ```csharp
-// Inherit from BaseEntity to get automatic GUID ID
-public class MyEntity : BaseEntity
+public sealed record Email(string Value)
 {
-    public string Name { get; set; }
-}
+    public static Email Create(string value) =>
+        new(Normalize(value));
 
-// DbContext
-public class MyDbContext : AuditableDbContext
-{
-    public MyDbContext(DbContextOptions options, IOptions<UserInfo> userInfo)
-        : base(options, userInfo) { }
+    private static string Normalize(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("…");
+        // … validation …
+        return value.Trim().ToLowerInvariant();
+    }
 
-    // DbSets...
+    public static implicit operator string(Email e) => e.Value;
+    public static explicit operator Email(string v) => Create(v);
 }
 ```
 
 ## Examples
 
-The `examples/` folder contains runnable console demos showing both simple usage and DDD/CQRS patterns:
+The `examples/` folder contains runnable console demos:
 
-- `examples/UserManagement` — simple example using `BaseEntity` with `Guid` IDs, including `IBusinessRule` implementations and `BaseSpecification<T>` examples with AND/OR/NOT combinators.
-- `examples/IdentityManagement` — simple example using `BaseEntity<T, TId>` with `int` IDs.
-- `examples/UserManagement.DDD` — layered DDD example (Domain / Application / Infrastructure / Presentation).
-- `examples/IdentityManagement.DDD` — DDD example on identification types and CQRS.
+| Example | Pattern | Tech |
+|---|---|---|
+| `examples/UserManagement` | Simple `BaseEntity` + Guid | `IBusinessRule`, `BaseSpecification<T>` |
+| `examples/IdentityManagement` | `BaseEntity<T, TId>` + int | EF Core converters |
+| `examples/UserManagement.DDD` | Layered DDD | Domain / Application / Infrastructure / Presentation |
+| `examples/IdentityManagement.DDD` | DDD + CQRS | Value Objects as records |
 
-Run an example from repository root, for example:
+Run an example:
 
 ```bash
 cd examples/UserManagement
 dotnet run
 ```
 
-Or for the DDD presentation:
-
-```bash
-cd examples/IdentityManagement.DDD/src/Presentation
-dotnet run
-```
-
-See `examples/README.md` for more details per example.
-
 ## Testing
-
-Run all tests:
 
 ```bash
 dotnet test
 ```
 
-The tests use `Microsoft.EntityFrameworkCore.InMemory`, `xUnit`, and `Moq` for unit and integration testing.
+Tests use `xUnit`, `Moq`, and `Microsoft.EntityFrameworkCore.InMemory`. Both `net10.0` and `net11.0` target frameworks are tested.
 
 ## Dependencies
 
-Major dependencies are managed centrally in `Directory.Packages.props`. The repository uses:
+Major dependencies are managed centrally in `Directory.Packages.props`:
 
-- `Microsoft.EntityFrameworkCore` (InMemory / Sqlite packages referenced centrally)
-- `Microsoft.Extensions.Hosting`, `Microsoft.Extensions.DependencyInjection`, `Microsoft.Extensions.Options`
-- `Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore` for EF diagnostics
-- `xUnit` and `Moq` for testing
+- `Microsoft.EntityFrameworkCore.*`  10.0.x — Infrastructure only
+- `Microsoft.Extensions.*`           10.0.x — Infrastructure only
+- `Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore` — Infrastructure only
+- `xUnit`, `Moq`, `coverlet.collector` — Tests only
 
-> **Production note**: When using `IdentityClientService` with `AddHttpClient`, configure the identity provider base URL (e.g. `https://identity.yourdomain.com/`) in your application's configuration. The placeholder `https://identity.example/` in the usage examples must be replaced with your real identity provider URL.
+> **OroKernel.Domain has zero NuGet dependencies.** It relies solely on the .NET BCL.
 
 ## Contributing
 
-1. Create a branch for your feature: `git checkout -b feature/new-feature`
-2. Make your changes and add tests
-3. Run tests: `dotnet test`
+1. Create a branch: `git checkout -b feature/my-feature`
+2. Make changes and add tests
+3. Run all tests: `dotnet test`
 4. Submit a pull request
 
 ## License
 
-This project is licensed under the GNU AGPL v3.0 or later. See the LICENSE file in the project root for details.
+This project is licensed under the GNU AGPL v3.0 or later.

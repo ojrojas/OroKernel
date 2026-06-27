@@ -1,26 +1,19 @@
-// IdentificationTypeName.cs - Value Object
+// IdentityManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace IdentityManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Identification type name value object with validation
+/// Identification type name value object with validation, modeled as a positional record.
 /// </summary>
-public sealed class IdentificationTypeName : BaseValueObject
+public sealed record IdentificationTypeName(string Value)
 {
     /// <summary>
-    /// Gets the name value.
+    /// Factory that validates and trims the name value.
     /// </summary>
-    public string Value { get; }
-
-    /// <summary>
-    /// Creates a new identification type name.
-    /// </summary>
-    public IdentificationTypeName(string value)
+    public static IdentificationTypeName Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Name cannot be null or empty", nameof(value));
@@ -28,13 +21,8 @@ public sealed class IdentificationTypeName : BaseValueObject
         if (value.Length > 100)
             throw new ArgumentException("Name cannot be longer than 100 characters", nameof(value));
 
-        Value = value.Trim();
+        return new IdentificationTypeName(value.Trim());
     }
-
-    /// <summary>
-    /// Creates a new identification type name (factory method).
-    /// </summary>
-    public static IdentificationTypeName Create(string value) => new(value);
 
     /// <summary>
     /// Returns the string representation of the name.
@@ -49,10 +37,5 @@ public sealed class IdentificationTypeName : BaseValueObject
     /// <summary>
     /// Explicit conversion from string.
     /// </summary>
-    public static explicit operator IdentificationTypeName(string value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value.ToLowerInvariant();
-    }
+    public static explicit operator IdentificationTypeName(string value) => Create(value);
 }

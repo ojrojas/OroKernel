@@ -5,8 +5,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using OroKernel.Shared.Data;
-using OroKernel.Shared.Options;
+using OroKernel.Infrastructure.Audit;
+using OroKernel.Infrastructure.Options;
 
 namespace UserManagement.Data;
 

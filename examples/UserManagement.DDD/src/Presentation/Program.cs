@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using OroKernel.Shared.Data;
-using OroKernel.Shared.Options;
-using OroKernel.Shared.Services;
+using OroKernel.Infrastructure.Audit;
+using OroKernel.Infrastructure.Options;
+using OroKernel.Infrastructure.Services;
 using UserManagement.DDD.Application.Commands;
 using UserManagement.DDD.Application.Queries;
 using UserManagement.DDD.Application.Services;
@@ -36,18 +36,18 @@ var host = Host.CreateDefaultBuilder(args)
         // Add ClaimsUserInfoService for user info
         services.AddTransient<IPostConfigureOptions<UserInfo>, ClaimsUserInfoService>();
         // Default provider that reads UserInfo from configured options (can be replaced with a per-request provider)
-        services.AddScoped<OroKernel.Shared.Interfaces.IUserInfoProvider, OroKernel.Shared.Services.DefaultUserInfoProvider>();
+        services.AddScoped<OroKernel.Infrastructure.Interfaces.IUserInfoProvider, OroKernel.Infrastructure.Services.DefaultUserInfoProvider>();
 
         // Optional: retry handler for outgoing HttpClient calls (lightweight alternative to Polly)
-        services.AddTransient<OroKernel.Shared.Services.RetryDelegatingHandler>();
+        services.AddTransient<OroKernel.Infrastructure.Services.RetryDelegatingHandler>();
 
         // (Optional) register a typed HttpClient for identity integration with timeout and retry handler
-        services.AddHttpClient<OroKernel.Shared.Interfaces.IIdentityClientService, OroKernel.Shared.Services.IdentityClientService>((sp, client) =>
+        services.AddHttpClient<OroKernel.Infrastructure.Interfaces.IIdentityClientService, OroKernel.Infrastructure.Services.IdentityClientService>((sp, client) =>
         {
             client.BaseAddress = new Uri("https://identity.example/");
             client.Timeout = TimeSpan.FromSeconds(10);
         })
-        .AddHttpMessageHandler<OroKernel.Shared.Services.RetryDelegatingHandler>();
+        .AddHttpMessageHandler<OroKernel.Infrastructure.Services.RetryDelegatingHandler>();
 
         // Infrastructure Layer
         services.AddDbContext<UserManagementDbContext>(options =>

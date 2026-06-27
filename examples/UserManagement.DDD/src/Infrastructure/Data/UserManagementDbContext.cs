@@ -5,8 +5,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using OroKernel.Shared.Data;
-using OroKernel.Shared.Options;
+using OroKernel.Infrastructure.Audit;
+using OroKernel.Infrastructure.Options;
 using UserManagement.DDD.Domain.Entities;
 
 namespace UserManagement.DDD.Infrastructure.Data;
@@ -33,13 +33,13 @@ public class UserManagementDbContext : AuditableDbContext
             entity.HasKey(u => u.Id);
             entity.Property(u => u.UserName).HasConversion(
                 v => v.Value,
-                v => new Domain.ValueObjects.UserName(v));
+                v => Domain.ValueObjects.UserName.Create(v));
             entity.Property(u => u.FullName).HasConversion(
                 v => $"{v.FirstName}|{v.LastName}",
-                v => new Domain.ValueObjects.FullName(v.Substring(0, v.IndexOf('|')), v.Substring(v.IndexOf('|') + 1)));
+                v => Domain.ValueObjects.FullName.Create(v.Substring(0, v.IndexOf('|')), v.Substring(v.IndexOf('|') + 1)));
             entity.Property(u => u.Email).HasConversion(
                 v => v.Value,
-                v => new Domain.ValueObjects.Email(v));
+                v => Domain.ValueObjects.Email.Create(v));
             entity.HasIndex(u => u.UserName).IsUnique();
             entity.HasIndex(u => u.Email).IsUnique();
         });

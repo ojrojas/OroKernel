@@ -31,7 +31,7 @@ public class IdentificationTypeService
     {
         var name = IdentificationTypeName.Create(command.Name);
         var countryCode = CountryCode.Create(command.CountryCode);
-        var pattern = ValidationPattern.CreatePattern(command.ValidationPattern);
+        var pattern = ValidationPattern.Create(command.ValidationPattern);
 
         var identificationType = IdentificationType.Create(
             name,
@@ -57,7 +57,7 @@ public class IdentificationTypeService
 
         var name = IdentificationTypeName.Create(command.Name);
         var countryCode = CountryCode.Create(command.CountryCode);
-        var validationPattern = ValidationPattern.CreatePattern(command.ValidationPattern);
+        var validationPattern = ValidationPattern.Create(command.ValidationPattern);
 
         identificationType.Update(
             name,

@@ -39,9 +39,9 @@ public class UserApplicationService
             throw new InvalidOperationException($"Email '{command.Email}' is already registered.");
 
         // Create value objects
-        var userName = new UserName(command.UserName);
-        var fullName = new FullName(command.FirstName, command.LastName);
-        var email = new Email(command.Email);
+        var userName = UserName.Create(command.UserName);
+        var fullName = FullName.Create(command.FirstName, command.LastName);
+        var email = Email.Create(command.Email);
 
         // Create entity
         User user;
@@ -76,8 +76,8 @@ public class UserApplicationService
             throw new InvalidOperationException($"Email '{command.Email}' is already registered.");
 
         // Update user
-        var fullName = new FullName(command.FirstName, command.LastName);
-        var email = new Email(command.Email);
+        var fullName = FullName.Create(command.FirstName, command.LastName);
+        var email = Email.Create(command.Email);
 
         user.UpdateInfo(fullName, email);
 

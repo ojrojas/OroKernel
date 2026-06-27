@@ -7,7 +7,7 @@ using IdentityManagement.DDD.Domain.Entities;
 using IdentityManagement.DDD.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using OroKernel.Shared.Data;
+using OroKernel.Infrastructure.Audit;
 
 namespace IdentityManagement.DDD.Infrastructure.Data;
 
@@ -18,7 +18,7 @@ public class IdentityManagementDbContext : AuditableDbContext
 {
     public DbSet<IdentificationType> IdentificationTypes { get; set; }
 
-    public IdentityManagementDbContext(DbContextOptions<IdentityManagementDbContext> options, IOptions<OroKernel.Shared.Options.UserInfo> userInfo)
+    public IdentityManagementDbContext(DbContextOptions<IdentityManagementDbContext> options, IOptions<OroKernel.Infrastructure.Options.UserInfo> userInfo)
         : base(options, userInfo)
     {
     }
@@ -35,7 +35,7 @@ public class IdentityManagementDbContext : AuditableDbContext
             entity.Property(e => e.Id)
                 .HasConversion(
                     id => id.Value,
-                    value => new IdentificationTypeId(value))
+                    value => IdentificationTypeId.Create(value))
                 .HasMaxLength(36)
                 .IsRequired();
 
@@ -63,7 +63,7 @@ public class IdentityManagementDbContext : AuditableDbContext
             entity.Property(e => e.ValidationPattern)
                 .HasConversion(
                     v => v.Value,
-                    v => ValidationPattern.CreatePattern(v))
+                    v => ValidationPattern.Create(v))
                 .HasMaxLength(200)
                 .IsRequired();
 

@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for details.
 
 using System.Linq.Expressions;
-using OroKernel.Shared.Specification;
+using OroKernel.Domain.Specification;
 
 namespace UserManagement.Specifications;
 

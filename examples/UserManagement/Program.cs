@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using OroKernel.Shared.Data;
-using OroKernel.Shared.Options;
-using OroKernel.Shared.Services;
+using OroKernel.Infrastructure.Audit;
+using OroKernel.Infrastructure.Options;
+using OroKernel.Infrastructure.Services;
 using UserManagement;
 using UserManagement.Data;
 
@@ -141,9 +141,9 @@ Console.WriteLine();
 
 // Show that all users inherit from BaseEntity
 Console.WriteLine("All users inherit from BaseEntity:");
-Console.WriteLine($"user1 is BaseEntity: {user1 is OroKernel.Shared.Entities.BaseEntity}");
-Console.WriteLine($"user2 is BaseEntity: {user2 is OroKernel.Shared.Entities.BaseEntity}");
-Console.WriteLine($"user3 is BaseEntity: {user3 is OroKernel.Shared.Entities.BaseEntity}");
+Console.WriteLine($"user1 is BaseEntity: {user1 is OroKernel.Domain.Entities.BaseEntity}");
+Console.WriteLine($"user2 is BaseEntity: {user2 is OroKernel.Domain.Entities.BaseEntity}");
+Console.WriteLine($"user3 is BaseEntity: {user3 is OroKernel.Domain.Entities.BaseEntity}");
 Console.WriteLine();
 
 // Demonstrate ID management

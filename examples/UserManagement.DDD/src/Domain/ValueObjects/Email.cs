@@ -1,26 +1,24 @@
-// Email.cs - Value Object
+// UserManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace UserManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Email address value object with validation
+/// Email address value object with validation, modeled as a positional record.
+/// Equality, hash and immutability are intrinsic to <see cref="record"/> in .NET 10/11.
 /// </summary>
-public sealed class Email : BaseValueObject
+public sealed record Email(string Value)
 {
-    /// <summary>
-    /// Gets the email address value.
-    /// </summary>
-    public string Value { get; private set; }
+    private static readonly System.Text.RegularExpressions.Regex EmailPattern = new(
+        @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+        System.Text.RegularExpressions.RegexOptions.Compiled);
 
     /// <summary>
-    /// Creates a new email address.
+    /// Factory that validates and normalizes the email value.
     /// </summary>
-    public Email(string value)
+    public static Email Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Email cannot be null or empty", nameof(value));
@@ -28,12 +26,12 @@ public sealed class Email : BaseValueObject
         if (value.Length > 255)
             throw new ArgumentException("Email cannot be longer than 255 characters", nameof(value));
 
-        // Basic email validation regex
-        if (!System.Text.RegularExpressions.Regex.IsMatch(value,
-            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"))
+        var normalized = value.Trim().ToLowerInvariant();
+
+        if (!EmailPattern.IsMatch(normalized))
             throw new ArgumentException("Invalid email format", nameof(value));
 
-        Value = value.ToLowerInvariant().Trim();
+        return new Email(normalized);
     }
 
     /// <summary>
@@ -49,10 +47,5 @@ public sealed class Email : BaseValueObject
     /// <summary>
     /// Explicit conversion from string.
     /// </summary>
-    public static explicit operator Email(string value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value.ToLowerInvariant();
-    }
+    public static explicit operator Email(string value) => Create(value);
 }

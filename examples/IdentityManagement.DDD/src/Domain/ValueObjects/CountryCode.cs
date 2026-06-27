@@ -1,26 +1,19 @@
-// CountryCode.cs - Value Object
+// IdentityManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace IdentityManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Country code value object with validation (ISO 3166-1 alpha-2 or alpha-3)
+/// Country code value object with validation (ISO 3166-1 alpha-2 or alpha-3), modeled as a positional record.
 /// </summary>
-public sealed class CountryCode : BaseValueObject
+public sealed record CountryCode(string Value)
 {
     /// <summary>
-    /// Gets the country code value.
+    /// Factory that validates and normalizes the country code value.
     /// </summary>
-    public string Value { get; private set; }
-
-    /// <summary>
-    /// Creates a new country code.
-    /// </summary>
-    public CountryCode(string value)
+    public static CountryCode Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Country code cannot be null or empty", nameof(value));
@@ -33,13 +26,8 @@ public sealed class CountryCode : BaseValueObject
         if (!System.Text.RegularExpressions.Regex.IsMatch(normalized, @"^[A-Z]+$"))
             throw new ArgumentException("Country code can only contain letters", nameof(value));
 
-        Value = normalized;
+        return new CountryCode(normalized);
     }
-
-    /// <summary>
-    /// Creates a new country code (factory method).
-    /// </summary>
-    public static CountryCode Create(string value) => new(value);
 
     /// <summary>
     /// Returns the string representation of the country code.
@@ -54,10 +42,5 @@ public sealed class CountryCode : BaseValueObject
     /// <summary>
     /// Explicit conversion from string.
     /// </summary>
-    public static explicit operator CountryCode(string value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value;
-    }
+    public static explicit operator CountryCode(string value) => Create(value);
 }

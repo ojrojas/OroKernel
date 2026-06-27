@@ -1,26 +1,23 @@
-// UserName.cs - Value Object
+// UserManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace UserManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Username value object with validation
+/// Username value object with validation, modeled as a positional record.
 /// </summary>
-public sealed class UserName : BaseValueObject
+public sealed record UserName(string Value)
 {
-    /// <summary>
-    /// Gets the username value.
-    /// </summary>
-    public string Value { get; private set; }
+    private static readonly System.Text.RegularExpressions.Regex UserNamePattern = new(
+        @"^[a-zA-Z0-9_]+$",
+        System.Text.RegularExpressions.RegexOptions.Compiled);
 
     /// <summary>
-    /// Creates a new username.
+    /// Factory that validates the username value.
     /// </summary>
-    public UserName(string value)
+    public static UserName Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Username cannot be null or empty", nameof(value));
@@ -31,10 +28,10 @@ public sealed class UserName : BaseValueObject
         if (value.Length > 50)
             throw new ArgumentException("Username cannot be longer than 50 characters", nameof(value));
 
-        if (!System.Text.RegularExpressions.Regex.IsMatch(value, @"^[a-zA-Z0-9_]+$"))
+        if (!UserNamePattern.IsMatch(value))
             throw new ArgumentException("Username can only contain letters, numbers, and underscores", nameof(value));
 
-        Value = value;
+        return new UserName(value);
     }
 
     /// <summary>
@@ -50,10 +47,5 @@ public sealed class UserName : BaseValueObject
     /// <summary>
     /// Explicit conversion from string.
     /// </summary>
-    public static explicit operator UserName(string value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value.ToLowerInvariant();
-    }
+    public static explicit operator UserName(string value) => Create(value);
 }

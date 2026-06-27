@@ -4,8 +4,8 @@
 // See the LICENSE file in the project root for details.
 
 using Microsoft.EntityFrameworkCore;
-using OroKernel.Shared.Entities;
-using OroKernel.Shared.Interfaces;
+using OroKernel.Domain.Entities;
+using OroKernel.Domain.Interfaces;
 using UserManagement.Data;
 
 namespace UserManagement.BusinessRules;

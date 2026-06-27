@@ -1,42 +1,35 @@
-// IdentificationTypeId.cs - Value Object for Entity ID
+// IdentityManagement.DDD
 // Copyright (C) 2026 Oscar Rojas
 // Licensed under the GNU AGPL v3.0 or later.
 // See the LICENSE file in the project root for details.
 
-using OroKernel.Shared.Entities;
-
 namespace IdentityManagement.DDD.Domain.ValueObjects;
 
 /// <summary>
-/// Identification type ID value object
+/// Identification type ID value object, modeled as a positional record wrapping a Guid.
 /// </summary>
-public sealed class IdentificationTypeId : BaseValueObject
+public sealed record IdentificationTypeId(Guid Value)
 {
     /// <summary>
-    /// Gets the Guid value.
+    /// Factory that validates the Guid is not empty.
     /// </summary>
-    public Guid Value { get; private set; }
-
-    /// <summary>
-    /// Creates a new identification type ID.
-    /// </summary>
-    public IdentificationTypeId(Guid value)
+    public static IdentificationTypeId Create(Guid value)
     {
         if (value == Guid.Empty)
             throw new ArgumentException("ID cannot be empty", nameof(value));
 
-        Value = value;
+        return new IdentificationTypeId(value);
     }
 
     /// <summary>
-    /// Creates a new identification type ID with a new Guid.
+    /// Creates a new identification type ID with a fresh Guid.
     /// </summary>
     public static IdentificationTypeId NewId() => new(Guid.NewGuid());
 
     /// <summary>
-    /// Creates a identification type ID from string.
+    /// Creates an identification type ID from its string representation.
     /// </summary>
-    public static IdentificationTypeId FromString(string value) => new(Guid.Parse(value));
+    public static IdentificationTypeId FromString(string value) => Create(Guid.Parse(value));
 
     /// <summary>
     /// Returns the string representation of the ID.
@@ -51,10 +44,5 @@ public sealed class IdentificationTypeId : BaseValueObject
     /// <summary>
     /// Explicit conversion from Guid.
     /// </summary>
-    public static explicit operator IdentificationTypeId(Guid value) => new(value);
-
-    protected override IEnumerable<object?> GetEquatibilityComponents()
-    {
-        yield return Value;
-    }
+    public static explicit operator IdentificationTypeId(Guid value) => Create(value);
 }
